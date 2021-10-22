@@ -2,27 +2,22 @@
 
 namespace yanlongli\AppStoreServerApi\response;
 
-
-/**
- */
-class JWSTransaction
+class JWSRenewalInfo
 {
-
     /**
      * @var string
      */
     public $jws = '';
 
     /**
-     * @var JWSTransactionDecodedPayload
+     * @var JWSRenewalInfoDecodedPayload
      */
     public $payload;
 
     public function __construct($jws)
     {
         $this->jws = $jws;
-
-        $this->payload = new JWSTransactionDecodedPayload();
+        $this->payload = new JWSRenewalInfoDecodedPayload();
         foreach ($this->getPayloadToArray() as $key => $value) {
             $this->payload->{$key} = $value;
         }
@@ -36,11 +31,6 @@ class JWSTransaction
             return json_decode(base64_decode($jwsArr[1]), true);
         }
         return false;
-    }
-
-    public function __get($name)
-    {
-        return $this->payload[$name];
     }
 
     public function __toString()

@@ -7,6 +7,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use yanlongli\AppStoreServerApi\request\ConsumptionRequest;
 use yanlongli\AppStoreServerApi\request\ExtendRenewalDateRequest;
+use yanlongli\AppStoreServerApi\response\ExtendRenewalDateResponse;
+use yanlongli\AppStoreServerApi\response\HistoryResponse;
+use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
+use yanlongli\AppStoreServerApi\response\RefundLookupResponse;
 
 class AppStoreServerApi
 {
@@ -63,8 +67,33 @@ class AppStoreServerApi
     }
 
     /**
-     * @return array ["status"=>0,"signedTransactions"=>[JWS]]
-     * @throws GuzzleException Response Codes
+     * @throws GuzzleException
+     */
+    protected function get($path, $bundleId = null)
+    {
+        return $this->getClient()->get($this->endpoint . $path, [
+            'headers' => [
+                'Authorization' => "Bearer " . $this->jwt($bundleId)
+            ]
+        ])->getBody()->getContents();
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    protected function put($path, $body, $bundleId = null)
+    {
+        return $this->getClient()->put($path, [
+            'headers' => [
+                'Authorization' => "Bearer " . $this->jwt($bundleId),
+                'Content-Type' => 'application/json'
+            ],
+            'body' => $body
+        ])->getBody()->getContents();
+    }
+
+    /**
+     * @return OrderLookupResponse ["status"=>0,"signedTransactions"=>[JWS]]
      * 200
      * OrderLookupResponse
      * OK
@@ -87,34 +116,32 @@ class AppStoreServerApi
      * The request failed. This may be due to a temporary outage. Check the specific error message for further information.
      *
      * Content-Type: application/json
-     * @link https://developer.apple.com/documentation/appstoreserverapi/orderlookupresponse OrderLookupResponse
+     * @throws GuzzleException
      * @link https://developer.apple.com/documentation/appstoreserverapi/look_up_order_id Look Up Order ID
+     * @link https://developer.apple.com/documentation/appstoreserverapi/orderlookupresponse OrderLookupResponse
      */
     public function lookup($orderId, $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/lookup/' . $orderId;
-
-        return json_decode($this->getClient()->get($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId)
-            ]
-        ])->getBody()->getContents(), true);
-
+        return new OrderLookupResponse(
+            $this->get('/inApps/v1/lookup/' . $orderId,
+                $bundleId
+            )
+        );
     }
 
     public function history($originalTransactionId, $revision = '', $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/history/' . $originalTransactionId;
+        $path = '/inApps/v1/history/' . $originalTransactionId;
 
         if (!empty($revision)) {
             $path .= '?revision=' . $revision;
         }
 
-        return json_decode($this->getClient()->get($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId)
-            ]
-        ])->getBody()->getContents(), true);
+        return new HistoryResponse(
+            $this->get($path,
+                $bundleId
+            )
+        );
     }
 
     public function subscriptions($originalTransactionId, $bundleId = null)
@@ -128,6 +155,13 @@ class AppStoreServerApi
         ])->getBody()->getContents(), true);
     }
 
+    /**
+     * @param string                   $originalTransactionId
+     * @param ConsumptionRequest|array $requestBody
+     * @param ?string                  $bundleId
+     * @return void
+     * @throws GuzzleException
+     */
     public function transactionsConsumption($originalTransactionId, $requestBody, $bundleId = null)
     {
         $path = $this->endpoint . '/inApps/v1/transactions/consumption/' . $originalTransactionId;
@@ -136,40 +170,39 @@ class AppStoreServerApi
             $requestBody = $requestBody->toArray();
         }
 
-        return json_decode($this->getClient()->put($path, [
+        $this->getClient()->put($path, [
             'headers' => [
                 'Authorization' => "Bearer " . $this->jwt($bundleId),
                 'Content-Type' => 'application/json'
             ],
             'body' => $requestBody
-        ])->getBody()->getContents(), true);
+        ]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function refundLookup($originalTransactionId, $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/refund/lookup/' . $originalTransactionId;
+        $path = '/inApps/v1/refund/lookup/' . $originalTransactionId;
 
-        return json_decode($this->getClient()->get($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId)
-            ]
-        ])->getBody()->getContents(), true);
+        return new RefundLookupResponse($this->get($path, $bundleId));
     }
 
+    /**
+     * @param string                         $originalTransactionId
+     * @param ExtendRenewalDateRequest|array $requestBody
+     * @param ?string                        $bundleId
+     * @return mixed
+     * @throws GuzzleException
+     */
     public function subscriptionsExtend($originalTransactionId, $requestBody, $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/subscriptions/extend/' . $originalTransactionId;
+        $path = '/inApps/v1/subscriptions/extend/' . $originalTransactionId;
 
         if ($requestBody instanceof ExtendRenewalDateRequest) {
             $requestBody = $requestBody->toArray();
         }
-
-        return json_decode($this->getClient()->put($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId),
-                'Content-Type' => 'application/json'
-            ],
-            'body' => $requestBody
-        ])->getBody()->getContents(), true);
+        return new ExtendRenewalDateResponse($this->put($path, $requestBody, $bundleId));
     }
 }

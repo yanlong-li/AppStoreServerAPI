@@ -8,7 +8,23 @@ namespace yanlongli\AppStoreServerApi\response;
  * 1 The orderId is valid.
  * @property JWSTransaction[] signedTransactions An array of in-app purchase transactions that are part of order, signed by Apple, in JSON Web Signature format.
  */
-class OrderLookupResponse
+class OrderLookupResponse extends Response
 {
+    /**
+     * @param $contents
+     */
+    public function __construct($contents)
+    {
+        parent::__construct($contents);
 
+        $arr = json_decode($contents, JSON_OBJECT_AS_ARRAY);
+        if (!$arr) {
+            return;
+        }
+        $this->status = $arr['status'];
+
+        foreach ($arr['signedTransactions'] as $signedTransaction) {
+            $this->signedTransactions[] = new JWSTransaction($signedTransaction);
+        }
+    }
 }

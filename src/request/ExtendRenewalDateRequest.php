@@ -15,6 +15,11 @@ namespace yanlongli\AppStoreServerApi\request;
 class ExtendRenewalDateRequest
 {
 
+    const EXTEND_REASON_CODE_UNKNOWN = 0;
+    const EXTEND_REASON_CODE_SATISFACTION = 1;
+    const EXTEND_REASON_CODE_OTHER = 2;
+    const EXTEND_REASON_CODE_FAILURE_OR_SUSPENSION = 3;
+
     public function __construct($extendReasonCode, $extendByDays, $requestIdentifier)
     {
         $this->extendReasonCode = $extendReasonCode;

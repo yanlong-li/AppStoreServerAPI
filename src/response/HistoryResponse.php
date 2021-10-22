@@ -10,7 +10,20 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string           revision           A token you use in a query to request the next set of transactions for the customer.
  * @property JWSTransaction[] signedTransactions JWSTransaction Transaction information, signed by the App Store, in JSON Web Signature format.
  */
-class HistoryResponse
+class HistoryResponse extends Response
 {
+    public function __construct($contents)
+    {
+        parent::__construct($contents);
+        $arr = json_decode($contents);
+        $this->appAppleId = $arr['appAppleId'];
+        $this->bundleId = $arr['bundleId'];
+        $this->environment = $arr['environment'];
+        $this->hasMore = $arr['hasMore'];
+        $this->revision = $arr['revision'];
 
+        foreach ($arr['signedTransactions'] as $signedTransaction) {
+            $this->signedTransactions[] = new JWSTransaction($signedTransaction);
+        }
+    }
 }

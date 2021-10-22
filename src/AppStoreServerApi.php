@@ -11,6 +11,7 @@ use yanlongli\AppStoreServerApi\response\ExtendRenewalDateResponse;
 use yanlongli\AppStoreServerApi\response\HistoryResponse;
 use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
 use yanlongli\AppStoreServerApi\response\RefundLookupResponse;
+use yanlongli\AppStoreServerApi\response\StatusResponse;
 
 class AppStoreServerApi
 {
@@ -129,6 +130,9 @@ class AppStoreServerApi
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function history($originalTransactionId, $revision = '', $bundleId = null)
     {
         $path = '/inApps/v1/history/' . $originalTransactionId;
@@ -144,15 +148,14 @@ class AppStoreServerApi
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function subscriptions($originalTransactionId, $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/subscriptions/' . $originalTransactionId;
+        $path = '/inApps/v1/subscriptions/' . $originalTransactionId;
 
-        return json_decode($this->getClient()->get($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId)
-            ]
-        ])->getBody()->getContents(), true);
+        return new StatusResponse($this->get($path, $bundleId));
     }
 
     /**
@@ -164,19 +167,13 @@ class AppStoreServerApi
      */
     public function transactionsConsumption($originalTransactionId, $requestBody, $bundleId = null)
     {
-        $path = $this->endpoint . '/inApps/v1/transactions/consumption/' . $originalTransactionId;
+        $path = '/inApps/v1/transactions/consumption/' . $originalTransactionId;
 
         if ($requestBody instanceof ConsumptionRequest) {
             $requestBody = $requestBody->toArray();
         }
 
-        $this->getClient()->put($path, [
-            'headers' => [
-                'Authorization' => "Bearer " . $this->jwt($bundleId),
-                'Content-Type' => 'application/json'
-            ],
-            'body' => $requestBody
-        ]);
+        $this->put($path, $requestBody, $bundleId);
     }
 
     /**
@@ -193,7 +190,7 @@ class AppStoreServerApi
      * @param string                         $originalTransactionId
      * @param ExtendRenewalDateRequest|array $requestBody
      * @param ?string                        $bundleId
-     * @return mixed
+     * @return ExtendRenewalDateResponse
      * @throws GuzzleException
      */
     public function subscriptionsExtend($originalTransactionId, $requestBody, $bundleId = null)

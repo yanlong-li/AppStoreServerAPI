@@ -1,0 +1,24 @@
+{
+  "name": "yanlongli/app-store-server-api",
+  "description": "Manage your customers’ App Store transactions from your server.",
+  "keywords": ["App Store Server API","Apple","storekit"],
+  "minimum-stability": "beta",
+  "version": "1.0",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "yanlongli",
+      "email": "ahlyl94@gmail.com"
+    }
+  ],
+  "require": {
+    "firebase/php-jwt": "*",
+    "guzzlehttp/guzzle": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "yanlongli\\AppStoreServerApi\\": "src/"
+    }
+  }
+}

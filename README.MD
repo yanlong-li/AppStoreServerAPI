@@ -92,9 +92,6 @@ $example->subscriptions(...,'bundleId');
 
 ## Example
 
-### Subscription Status 订阅状态查询
-
-> 这里的订单号是app上报的订单号，较长的数字订单号。
 
 ```php
 <?php
@@ -107,25 +104,25 @@ $example = new \yanlongli\AppStoreServerApi\AppStoreServerApi(
     'IssuerID',
     'app bundle id',// Optional,可选的，如果仅管理单个应用可以设定默认值。
 );
+
+// Get Subscription Status
 $example->subscriptions('originalTransactionId','app bundle id'); // app bundle id 是可选的，这里将覆盖构造函数中的设定。
-```
 
-### Order ID Lookup 订单查询
+// Get Transaction History
+$example->history('originalTransactionId','revision');
 
-> 这里的订单号指的是 客户通过邮件等方式收到的订单号，通常为 10个字符左右： AAA11A1AA1
+// Consumption Information
+$example->transactionsConsumption('originalTransactionId','requestBody');
 
-```php
-<?php
-require_once 'vendor/autoload.php';
+// Order ID Lookup
+$example->lookup('orderId');
 
-$example = new \yanlongli\AppStoreServerApi\AppStoreServerApi(
-    Environment::ENDPOINT_PRODUCTION,
-    'private key id',
-    'private key',
-    'IssuerID',
-    "app bundle id"
-);
-$example->lookup('customers’ receipt order id'); // ABC123
+// Refund Lookup
+$example->refundLookup('originalTransactionId');
+
+// Extend a Subscription Renewal Date
+$example->subscriptionsExtend('originalTransactionId','requestBody')
+
 ```
 
 ## Topics

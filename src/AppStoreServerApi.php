@@ -39,7 +39,7 @@ class AppStoreServerApi
         $this->bundleId = $bundleId;
     }
 
-    public function jwt($bundleId = null)
+    protected function jwt($bundleId = null)
     {
         $payload = [
             'iss' => $this->issuerId,
@@ -94,6 +94,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Order ID Lookup
      * @return OrderLookupResponse ["status"=>0,"signedTransactions"=>[JWS]]
      * 200
      * OrderLookupResponse
@@ -131,6 +132,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Get Transaction History
      * @throws GuzzleException
      */
     public function history($originalTransactionId, $revision = '', $bundleId = null)
@@ -149,6 +151,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Get Subscription Status
      * @throws GuzzleException
      */
     public function subscriptions($originalTransactionId, $bundleId = null)
@@ -159,6 +162,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Consumption Information
      * @param string                   $originalTransactionId
      * @param ConsumptionRequest|array $requestBody
      * @param ?string                  $bundleId
@@ -177,6 +181,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Refund Lookup
      * @throws GuzzleException
      */
     public function refundLookup($originalTransactionId, $bundleId = null)
@@ -187,6 +192,7 @@ class AppStoreServerApi
     }
 
     /**
+     * Extend a Subscription Renewal Date
      * @param string                         $originalTransactionId
      * @param ExtendRenewalDateRequest|array $requestBody
      * @param ?string                        $bundleId

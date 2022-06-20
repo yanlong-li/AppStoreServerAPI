@@ -187,3 +187,8 @@ Data types used in decoded renewal info payloads.
 ### Error Information
 [Error Codes](https://developer.apple.com/documentation/appstoreserverapi/error_codes)
 Error codes returned by App Store Server API responses.
+
+
+## Change 
+Notification Upgrade to 2.5
+Api Upgrade to 1.5

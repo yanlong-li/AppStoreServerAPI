@@ -5,6 +5,7 @@ namespace yanlongli\AppStoreServerApi\response;
 /**
  * @property string appAccountToken             The UUID an app optionally generates to map a customer’s in-app purchase with its resulting App Store transaction.
  * @property string bundleId                    The bundle identifier of the app.
+ * @property string environment                 The server environment, either sandbox or production.
  * @property string expiresDate                 The UNIX time, in milliseconds, the subscription expires or renews.
  * @property string inAppOwnershipType          A string that describes whether the transaction was purchased by the user, or is available to them through Family Sharing.
  * @property string isUpgraded                  The Boolean value that indicates whether the user upgraded to another subscription.
@@ -22,6 +23,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string transactionId               The unique identifier of the transaction.
  * @property string type                        The type of the in-app purchase.
  * @property string webOrderLineItemId          A unique ID that identifies subscription purchase events across devices, including subscription renewals.
+ * @property string recentSubscriptionStartDate The earliest start date of a subscription in a series of auto-renewable subscription purchases that ignores all lapses of paid service shorter than 60 days.
  */
 class JWSTransactionDecodedPayload
 {

@@ -17,14 +17,14 @@ class JWSNotificationResponseBodyV2DecodedPayloadData
     {
         if ($name === 'signedRenewalInfo') {
             $this->signedRenewalInfo = new JWSRenewalInfo($value);
-            foreach ($value as $key => $item) {
-                $this->signedRenewalInfo->{$key} = $item;
-            }
+//            foreach ($value as $key => $item) {
+//                $this->signedRenewalInfo->{$key} = $item;
+//            }
         } elseif ($name === 'signedTransactionInfo') {
             $this->signedTransactionInfo = new JWSTransaction($value);
-            foreach ($value as $key => $item) {
-                $this->signedTransactionInfo->{$key} = $item;
-            }
+//            foreach ($value as $key => $item) {
+//                $this->signedTransactionInfo->{$key} = $item;
+//            }
         } else {
             $this->{$name} = $value;
         }

@@ -12,6 +12,9 @@ namespace yanlongli\AppStoreServerApi\response;
  */
 class HistoryResponse extends Response
 {
+    const ENVIRONMENT_PRODUCTION = 'Production';
+    const ENVIRONMENT_SANDBOX = 'Sandbox';
+
     public function __construct($contents)
     {
         parent::__construct($contents);

@@ -8,6 +8,8 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string                                          $notificationUUID
  * @property string                                          $notificationVersion
  * @property JWSNotificationResponseBodyV2DecodedPayloadData $data
+ * @property string                                          $version
+ * @property string                                          $signedDate
  *
  */
 class JWSNotificationResponseBodyV2DecodedPayload
@@ -26,6 +28,7 @@ class JWSNotificationResponseBodyV2DecodedPayload
     const NOTIFICATION_TYPE_RENEWAL_EXTENDED = 'RENEWAL_EXTENDED';
     const NOTIFICATION_TYPE_REVOKE = 'REVOKE';
     const NOTIFICATION_TYPE_SUBSCRIBED = 'SUBSCRIBED';
+    const NOTIFICATION_TYPE_TEST = 'TEST';
 
 
     const SUB_TYPE_INITIAL_BUY = 'INITIAL_BUY';
@@ -41,6 +44,7 @@ class JWSNotificationResponseBodyV2DecodedPayload
     const SUB_TYPE_BILLING_RECOVERY = 'BILLING_RECOVERY';
     const SUB_TYPE_PENDING = 'PENDING';
     const SUB_TYPE_ACCEPTED = 'ACCEPTED';
+    const SUB_TYPE_TEST = 'TEST';
 
     public function __set($name, $value)
     {

@@ -7,8 +7,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use yanlongli\AppStoreServerApi\request\ConsumptionRequest;
 use yanlongli\AppStoreServerApi\request\ExtendRenewalDateRequest;
+use yanlongli\AppStoreServerApi\request\NotificationHistoryRequest;
 use yanlongli\AppStoreServerApi\response\ExtendRenewalDateResponse;
 use yanlongli\AppStoreServerApi\response\HistoryResponse;
+use yanlongli\AppStoreServerApi\response\NotificationHistoryResponse;
 use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
 use yanlongli\AppStoreServerApi\response\RefundLookupResponse;
 use yanlongli\AppStoreServerApi\response\StatusResponse;
@@ -84,12 +86,23 @@ class AppStoreServerApi
      */
     protected function put($path, $body, $bundleId = null)
     {
-        return $this->getClient()->put($path, [
+        return $this->getClient()->put($this->endpoint . $path, [
             'headers' => [
                 'Authorization' => "Bearer " . $this->jwt($bundleId),
                 'Content-Type' => 'application/json'
             ],
             'body' => $body
+        ])->getBody()->getContents();
+    }
+
+    protected function post($path, $body, $bundleId = null)
+    {
+        var_dump($path);
+        return $this->getClient()->post($this->endpoint . $path, [
+            'headers' => [
+                'Authorization' => "Bearer " . $this->jwt($bundleId),
+            ],
+            'json' => $body,
         ])->getBody()->getContents();
     }
 
@@ -133,14 +146,36 @@ class AppStoreServerApi
 
     /**
      * Get Transaction History
+     * @param string|array $params string for revision,array with key=>value <br/>
+     *                             startDate<br/>
+     *                             An optional start date of the timespan for the transaction history records you’re requesting. The startDate must precede the endDate if you specify both dates. To be included in results, the transaction's purchaseDate must be equal to or greater than the startDate.<br/>
+     *                             endDate<br/>
+     *                             An optional end date of the timespan for the transaction history records you’re requesting. Choose an endDate that’s later than the startDate if you specify both dates. Using an endDate in the future is valid. To be included in results, the transaction’s purchaseDate must be less than the endDate.<br/>
+     *                             productId<br/>
+     *                             An optional filter that indicates the product identifier to include in the transaction history. Your query may specify more than one productID.<br/>
+     *                             productType<br/>
+     *                             An optional filter that indicates the product type to include in the transaction history. Your query may specify more than one productType.<br/>
+     *                             Possible values: AUTO_RENEWABLE, NON_RENEWABLE, CONSUMABLE, NON_CONSUMABLE<br/>
+     *                             sort<br/>
+     *                             An optional sort order for the transaction history records. The response sorts the transaction records by their recently modified date. The default value is ASCENDING, so you receive the oldest records first. <br/>
+     *                             Possible values: ASCENDING, DESCENDING<br/>
+     *                             subscriptionGroupIdentifier<br/>
+     *                             An optional filter that indicates the subscription group identifier to include in the transaction history. Your query may specify more than one subscriptionGroupIdentifier.<br/>
+     *                             inAppOwnershipType<br/>
+     *                             An optional filter that limits the transaction history by the in-app ownership type.<br/>
+     *                             excludeRevoked<br/>
+     *                             An optional Boolean value that indicates whether the transaction history excludes refunded and revoked transactions. The default value is false. <br/>
+     *                             Possible values: true, false<br/>
      * @throws GuzzleException
      */
-    public function history($originalTransactionId, $revision = '', $bundleId = null)
+    public function history($originalTransactionId, $params = '', $bundleId = null)
     {
         $path = '/inApps/v1/history/' . $originalTransactionId;
 
-        if (!empty($revision)) {
-            $path .= '?revision=' . $revision;
+        if (is_array($params)) {
+            $path .= '?' . http_build_query($params);
+        } elseif (!empty($params)) {
+            $path .= '?revision=' . $params;
         }
 
         return new HistoryResponse(
@@ -207,5 +242,26 @@ class AppStoreServerApi
             $requestBody = $requestBody->toArray();
         }
         return new ExtendRenewalDateResponse($this->put($path, $requestBody, $bundleId));
+    }
+
+    /**
+     * @param NotificationHistoryRequest|array $params paginationToken
+     * @param                                  $bundleId
+     */
+    public function notificationHistory($requestBody, $paginationToken = '', $bundleId = null)
+    {
+        $path = '/inApps/v1/notifications/history';
+        if (!empty($paginationToken)) {
+            $path .= '?paginationToken=' . $paginationToken;
+        }
+        if ($requestBody instanceof NotificationHistoryRequest) {
+            $requestBody = $requestBody->toArray();
+        }
+        return $this->post($path, $requestBody, $bundleId);
+    }
+
+    public function notificationsTest($bundleId = null)
+    {
+        return new NotificationHistoryResponse($this->post('/inApps/v1/notifications/test', [], $bundleId));
     }
 }

@@ -33,9 +33,9 @@ class JWSTransaction
     {
         $jwsArr = explode(".", $this->jws);
         if (isset($jwsArr[1])) {
-            return json_decode(base64_decode($jwsArr[1]), true);
+            return json_decode(base64_decode($jwsArr[1]), true)?:[];
         }
-        return false;
+        return [];
     }
 
     public function __get($name)

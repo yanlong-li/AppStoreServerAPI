@@ -12,6 +12,7 @@ use yanlongli\AppStoreServerApi\response\ExtendRenewalDateResponse;
 use yanlongli\AppStoreServerApi\response\HistoryResponse;
 use yanlongli\AppStoreServerApi\response\NotificationHistoryResponse;
 use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
+use yanlongli\AppStoreServerApi\response\RefundHistoryResponse;
 use yanlongli\AppStoreServerApi\response\RefundLookupResponse;
 use yanlongli\AppStoreServerApi\response\StatusResponse;
 
@@ -218,12 +219,19 @@ class AppStoreServerApi
     /**
      * Refund Lookup
      * @throws GuzzleException
+     * @deprecated
      */
     public function refundLookup($originalTransactionId, $bundleId = null)
     {
         $path = '/inApps/v1/refund/lookup/' . $originalTransactionId;
 
         return new RefundLookupResponse($this->get($path, $bundleId));
+    }
+
+    public function refundLookupV2($originalTransactionId, $bundleId = null)
+    {
+        $path = '/inApps/v2/refund/lookup/' . $originalTransactionId;
+        return new RefundHistoryResponse($this->get($path, $bundleId));
     }
 
     /**

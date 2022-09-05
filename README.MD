@@ -1,7 +1,7 @@
 App Store Server API / 苹果应用商店服务端 API
 ===
 > Manage your customers’ App Store transactions from your server.
-> 从服务器管理客户的应用商店事务。
+> 从服务器管理客户的应用商店事务。譬如订阅状态、订单历史记录、退款记录、通知推送记录等
 
 ## Overview
 
@@ -192,3 +192,4 @@ Error codes returned by App Store Server API responses.
 ## Change 
 Notification Upgrade to 2.5
 Api Upgrade to 1.5
+Api Upgrade to 1.6

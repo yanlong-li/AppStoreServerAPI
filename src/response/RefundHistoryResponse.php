@@ -1,15 +1,12 @@
 <?php
 
 namespace yanlongli\AppStoreServerApi\response;
-
 /**
- * RefundLookupResponse
- * A response that contains an array of signed JSON Web Signature (JWS) transactions.
- * @link https://developer.apple.com/documentation/appstoreserverapi/refundlookupresponse
- * @property JWSTransaction[] signedTransactions An array of in-app purchase transactions that are part of order, signed by Apple, in JSON Web Signature format.
- * @deprecated
+ * @property boolean          $hasMore  是否还有更多
+ * @property string           $revision 获取后续记录的凭据
+ * @property JWSTransaction[] $signedTransactions
  */
-class RefundLookupResponse extends Response
+class RefundHistoryResponse extends Response
 {
     /**
      * @param $contents

@@ -17,7 +17,7 @@ class OrderLookupResponse extends Response
     {
         parent::__construct($contents);
 
-        $arr = json_decode($contents, JSON_OBJECT_AS_ARRAY);
+        $arr = json_decode($contents, true);
         if (!$arr) {
             return;
         }

@@ -18,7 +18,7 @@ class HistoryResponse extends Response
     public function __construct($contents)
     {
         parent::__construct($contents);
-        $arr = json_decode($contents);
+        $arr = json_decode($contents, true);
         $this->appAppleId = $arr['appAppleId'];
         $this->bundleId = $arr['bundleId'];
         $this->environment = $arr['environment'];

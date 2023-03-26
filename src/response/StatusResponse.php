@@ -25,7 +25,7 @@ class StatusResponse extends Response
         if (!$arr) {
             return;
         }
-        $this->appAppleId = $arr['appAppleId'];
+        $this->appAppleId = $arr['appAppleId'] ?? null;
         $this->bundleId = $arr['bundleId'];
         $this->environment = $arr['environment'];
 

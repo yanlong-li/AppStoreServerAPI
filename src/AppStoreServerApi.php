@@ -7,9 +7,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use yanlongli\AppStoreServerApi\request\ConsumptionRequest;
 use yanlongli\AppStoreServerApi\request\ExtendRenewalDateRequest;
+use yanlongli\AppStoreServerApi\request\MassExtendRenewalDateRequest;
 use yanlongli\AppStoreServerApi\request\NotificationHistoryRequest;
 use yanlongli\AppStoreServerApi\response\ExtendRenewalDateResponse;
 use yanlongli\AppStoreServerApi\response\HistoryResponse;
+use yanlongli\AppStoreServerApi\response\MassExtendRenewalDateResponse;
+use yanlongli\AppStoreServerApi\response\MassExtendRenewalDateStatusResponse;
 use yanlongli\AppStoreServerApi\response\NotificationHistoryResponse;
 use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
 use yanlongli\AppStoreServerApi\response\RefundHistoryResponse;
@@ -27,30 +30,30 @@ class AppStoreServerApi
     protected $guzzleHttpClient;
 
     /**
-     * @param string $endpoint     Web Service Endpoint
+     * @param string $endpoint Web Service Endpoint
      * @param string $privateKeyId private key id
-     * @param string $privateKey   private key
-     * @param string $issuerId     IssuerID
+     * @param string $privateKey private key
+     * @param string $issuerId IssuerID
      * @link https://developer.apple.com/documentation/appstoreserverapi/creating_api_keys_to_use_with_the_app_store_server_api private and issuerid see
      */
     public function __construct($endpoint, $privateKeyId, $privateKey, $issuerId, $bundleId = null)
     {
-        $this->endpoint = $endpoint;
+        $this->endpoint     = $endpoint;
         $this->privateKeyId = $privateKeyId;
-        $this->privateKey = $privateKey;
-        $this->issuerId = $issuerId;
-        $this->bundleId = $bundleId;
+        $this->privateKey   = $privateKey;
+        $this->issuerId     = $issuerId;
+        $this->bundleId     = $bundleId;
     }
 
     protected function jwt($bundleId = null)
     {
         $payload = [
-            'iss' => $this->issuerId,
-            "iat" => time() - 10,
-            "exp" => time() + 3590,
-            "aud" => "appstoreconnect-v1",
+            'iss'   => $this->issuerId,
+            "iat"   => time() - 10,
+            "exp"   => time() + 3590,
+            "aud"   => "appstoreconnect-v1",
             "nonce" => $this->uuid(),
-            "bid" => $bundleId ?: $this->bundleId,
+            "bid"   => $bundleId ?: $this->bundleId,
         ];
         return JWT::encode($payload, $this->privateKey, 'ES256', $this->privateKeyId);
     }
@@ -90,9 +93,9 @@ class AppStoreServerApi
         return $this->getClient()->put($this->endpoint . $path, [
             'headers' => [
                 'Authorization' => "Bearer " . $this->jwt($bundleId),
-                'Content-Type' => 'application/json'
+                'Content-Type'  => 'application/json'
             ],
-            'body' => $body
+            'body'    => $body
         ])->getBody()->getContents();
     }
 
@@ -103,7 +106,7 @@ class AppStoreServerApi
             'headers' => [
                 'Authorization' => "Bearer " . $this->jwt($bundleId),
             ],
-            'json' => $body,
+            'json'    => $body,
         ])->getBody()->getContents();
     }
 
@@ -228,6 +231,17 @@ class AppStoreServerApi
         return new RefundLookupResponse($this->get($path, $bundleId));
     }
 
+    /**
+     * Get Refund History
+     *
+     * Get a paginated list of all of a customer’s refunded in-app purchases for your app.
+     * App Store Server API 1.6+
+     * @param $originalTransactionId
+     * @param $bundleId
+     * @return RefundHistoryResponse
+     * @throws GuzzleException
+     * @since 1.6+
+     */
     public function refundLookupV2($originalTransactionId, $bundleId = null)
     {
         $path = '/inApps/v2/refund/lookup/' . $originalTransactionId;
@@ -236,6 +250,8 @@ class AppStoreServerApi
 
     /**
      * Extend a Subscription Renewal Date
+     *
+     * Extends the renewal date of a customer’s active subscription using the original transaction identifier.
      * @param string                         $originalTransactionId
      * @param ExtendRenewalDateRequest|array $requestBody
      * @param ?string                        $bundleId
@@ -253,8 +269,49 @@ class AppStoreServerApi
     }
 
     /**
-     * @param NotificationHistoryRequest|array $params paginationToken
-     * @param                                  $bundleId
+     * Extend Subscription Renewal Dates for All Active Subscribers
+     *
+     * Uses a subscription’s product identifier to extend the renewal date for all of its eligible active subscribers.
+     * @param ExtendRenewalDateRequest|array $requestBody
+     * @param ?string                        $bundleId
+     * @return MassExtendRenewalDateResponse
+     * @throws GuzzleException
+     * @since 1.7+
+     */
+    public function extendSubscriptionRenewalDatesForAllActiveSubscribers($requestBody, $bundleId = null)
+    {
+        $path = '/inApps/v1/subscriptions/extend/mass/';
+
+        if ($requestBody instanceof MassExtendRenewalDateRequest) {
+            $requestBody = $requestBody->toArray();
+        }
+        return new MassExtendRenewalDateResponse($this->post($path, $requestBody, $bundleId));
+    }
+
+    /**
+     * Get Status of Subscription Renewal Date Extensions
+     *
+     * Checks whether a renewal date extension request completed, and provides the final count of successful or failed extensions.
+     * @param string  $requestIdentifier
+     * @param string  $productId
+     * @param ?string $bundleId
+     * @return MassExtendRenewalDateStatusResponse
+     * @throws GuzzleException
+     * @since 1.7+
+     */
+    public function getStatusOfSubscriptionRenewalDateExtensions($requestIdentifier, $productId, $bundleId = null)
+    {
+        $path = "/inApps/v1/subscriptions/extend/mass/{$requestIdentifier}/{$productId}";
+
+        return new MassExtendRenewalDateStatusResponse($this->get($path, $bundleId));
+    }
+
+
+    /**
+     * @param                                  $requestBody
+     * @param string                           $paginationToken
+     * @param ?string                          $bundleId
+     * @return NotificationHistoryResponse
      */
     public function notificationHistory($requestBody, $paginationToken = '', $bundleId = null)
     {
@@ -265,7 +322,7 @@ class AppStoreServerApi
         if ($requestBody instanceof NotificationHistoryRequest) {
             $requestBody = $requestBody->toArray();
         }
-        return $this->post($path, $requestBody, $bundleId);
+        return new NotificationHistoryResponse($this->post($path, $requestBody, $bundleId));
     }
 
     public function notificationsTest($bundleId = null)

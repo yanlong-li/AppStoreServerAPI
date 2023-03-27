@@ -19,7 +19,7 @@ class HistoryResponse extends Response
     {
         parent::__construct($contents);
         $arr = json_decode($contents, true);
-        $this->appAppleId = $arr['appAppleId'];
+        $this->appAppleId = $arr['appAppleId'] ?? null;
         $this->bundleId = $arr['bundleId'];
         $this->environment = $arr['environment'];
         $this->hasMore = $arr['hasMore'];

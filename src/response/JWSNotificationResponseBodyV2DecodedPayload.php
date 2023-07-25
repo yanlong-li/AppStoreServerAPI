@@ -10,6 +10,8 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property JWSNotificationResponseBodyV2DecodedPayloadData $data
  * @property string                                          $version
  * @property string                                          $signedDate
+ * @property $storefront
+ * @property $storefrontId
  *
  */
 class JWSNotificationResponseBodyV2DecodedPayload

@@ -18,6 +18,7 @@ use yanlongli\AppStoreServerApi\response\OrderLookupResponse;
 use yanlongli\AppStoreServerApi\response\RefundHistoryResponse;
 use yanlongli\AppStoreServerApi\response\RefundLookupResponse;
 use yanlongli\AppStoreServerApi\response\StatusResponse;
+use yanlongli\AppStoreServerApi\response\TransactionInfoResponse;
 
 class AppStoreServerApi
 {
@@ -30,11 +31,13 @@ class AppStoreServerApi
     protected $guzzleHttpClient;
 
     /**
-     * @param string $endpoint Web Service Endpoint
+     * @param string $endpoint     Web Service Endpoint
      * @param string $privateKeyId private key id
-     * @param string $privateKey private key
-     * @param string $issuerId IssuerID
-     * @link https://developer.apple.com/documentation/appstoreserverapi/creating_api_keys_to_use_with_the_app_store_server_api private and issuerid see
+     * @param string $privateKey   private key
+     * @param string $issuerId     IssuerID
+     *
+     * @link https://developer.apple.com/documentation/appstoreserverapi/creating_api_keys_to_use_with_the_app_store_server_api
+     *       private and issuerid see
      */
     public function __construct($endpoint, $privateKeyId, $privateKey, $issuerId, $bundleId = null)
     {
@@ -73,9 +76,6 @@ class AppStoreServerApi
         return $this->guzzleHttpClient ?: $this->guzzleHttpClient = new Client();
     }
 
-    /**
-     * @throws GuzzleException
-     */
     protected function get($path, $bundleId = null)
     {
         return $this->getClient()->get($this->endpoint . $path, [
@@ -85,9 +85,6 @@ class AppStoreServerApi
         ])->getBody()->getContents();
     }
 
-    /**
-     * @throws GuzzleException
-     */
     protected function put($path, $body, $bundleId = null)
     {
         return $this->getClient()->put($this->endpoint . $path, [
@@ -132,7 +129,8 @@ class AppStoreServerApi
      * 500
      * (GeneralInternalError | GeneralInternalRetryableError)
      * Internal Server Error
-     * The request failed. This may be due to a temporary outage. Check the specific error message for further information.
+     * The request failed. This may be due to a temporary outage. Check the specific error message for further
+     * information.
      *
      * Content-Type: application/json
      * @throws GuzzleException
@@ -150,31 +148,18 @@ class AppStoreServerApi
 
     /**
      * Get Transaction History
-     * @param string|array $params string for revision,array with key=>value <br/>
-     *                             startDate<br/>
-     *                             An optional start date of the timespan for the transaction history records you’re requesting. The startDate must precede the endDate if you specify both dates. To be included in results, the transaction's purchaseDate must be equal to or greater than the startDate.<br/>
-     *                             endDate<br/>
-     *                             An optional end date of the timespan for the transaction history records you’re requesting. Choose an endDate that’s later than the startDate if you specify both dates. Using an endDate in the future is valid. To be included in results, the transaction’s purchaseDate must be less than the endDate.<br/>
-     *                             productId<br/>
-     *                             An optional filter that indicates the product identifier to include in the transaction history. Your query may specify more than one productID.<br/>
-     *                             productType<br/>
-     *                             An optional filter that indicates the product type to include in the transaction history. Your query may specify more than one productType.<br/>
-     *                             Possible values: AUTO_RENEWABLE, NON_RENEWABLE, CONSUMABLE, NON_CONSUMABLE<br/>
-     *                             sort<br/>
-     *                             An optional sort order for the transaction history records. The response sorts the transaction records by their recently modified date. The default value is ASCENDING, so you receive the oldest records first. <br/>
-     *                             Possible values: ASCENDING, DESCENDING<br/>
-     *                             subscriptionGroupIdentifier<br/>
-     *                             An optional filter that indicates the subscription group identifier to include in the transaction history. Your query may specify more than one subscriptionGroupIdentifier.<br/>
-     *                             inAppOwnershipType<br/>
-     *                             An optional filter that limits the transaction history by the in-app ownership type.<br/>
-     *                             excludeRevoked<br/>
-     *                             An optional Boolean value that indicates whether the transaction history excludes refunded and revoked transactions. The default value is false. <br/>
-     *                             Possible values: true, false<br/>
-     * @throws GuzzleException
+     *
+     * @param string       $transactionId (Required) The identifier of a transaction that belongs to the customer, and
+     *                                    which may be an original transaction identifier (originalTransactionId).
+     * @param string|array $params
+     *
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history?changes=latest_minor
+     *       Document
+     *
      */
-    public function history($originalTransactionId, $params = '', $bundleId = null)
+    public function history($transactionId, $params = '', $bundleId = null)
     {
-        $path = '/inApps/v1/history/' . $originalTransactionId;
+        $path = '/inApps/v1/history/' . $transactionId;
 
         if (is_array($params)) {
             $path .= '?' . http_build_query($params);
@@ -191,26 +176,48 @@ class AppStoreServerApi
 
     /**
      * Get Subscription Status
-     * @throws GuzzleException
+     *
+     * @param string $transactionId transactionId or originalTransactionId
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses?changes=latest_minor
      */
-    public function subscriptions($originalTransactionId, $bundleId = null)
+    public function subscriptions($transactionId, $params = [], $bundleId = null)
     {
-        $path = '/inApps/v1/subscriptions/' . $originalTransactionId;
+        $path = '/inApps/v1/subscriptions/' . $transactionId;
 
+        if (!empty($params)) {
+            $path .= '?' . http_build_query($params);
+        }
         return new StatusResponse($this->get($path, $bundleId));
     }
 
     /**
+     * Get Transaction Info
+     *
+     * @param string  $transactionId
+     * @param ?string $bundleId
+     *
+     * @since 1.8+
+     */
+    public function getTransactionInfo($transactionId, $bundleId = null)
+    {
+        $path = '/inApps/v1/transactions/' . $transactionId;
+
+        return new TransactionInfoResponse($this->get($path, $bundleId));
+    }
+
+    /**
      * Consumption Information
-     * @param string                   $originalTransactionId
+     *
+     * @param string                   $transactionId transactionId or originalTransactionId
      * @param ConsumptionRequest|array $requestBody
      * @param ?string                  $bundleId
+     *
      * @return void
      * @throws GuzzleException
      */
-    public function transactionsConsumption($originalTransactionId, $requestBody, $bundleId = null)
+    public function transactionsConsumption($transactionId, $requestBody, $bundleId = null)
     {
-        $path = '/inApps/v1/transactions/consumption/' . $originalTransactionId;
+        $path = '/inApps/v1/transactions/consumption/' . $transactionId;
 
         if ($requestBody instanceof ConsumptionRequest) {
             $requestBody = $requestBody->toArray();
@@ -220,31 +227,21 @@ class AppStoreServerApi
     }
 
     /**
-     * Refund Lookup
-     * @throws GuzzleException
-     * @deprecated
-     */
-    public function refundLookup($originalTransactionId, $bundleId = null)
-    {
-        $path = '/inApps/v1/refund/lookup/' . $originalTransactionId;
-
-        return new RefundLookupResponse($this->get($path, $bundleId));
-    }
-
-    /**
      * Get Refund History
      *
      * Get a paginated list of all of a customer’s refunded in-app purchases for your app.
      * App Store Server API 1.6+
-     * @param $originalTransactionId
+     *
+     * @param string $transactionId transactionId or originalTransactionId
      * @param $bundleId
+     *
      * @return RefundHistoryResponse
      * @throws GuzzleException
      * @since 1.6+
      */
-    public function refundLookupV2($originalTransactionId, $bundleId = null)
+    public function refundLookupV2($transactionId, $bundleId = null)
     {
-        $path = '/inApps/v2/refund/lookup/' . $originalTransactionId;
+        $path = '/inApps/v2/refund/lookup/' . $transactionId;
         return new RefundHistoryResponse($this->get($path, $bundleId));
     }
 
@@ -252,11 +249,12 @@ class AppStoreServerApi
      * Extend a Subscription Renewal Date
      *
      * Extends the renewal date of a customer’s active subscription using the original transaction identifier.
+     *
      * @param string                         $originalTransactionId
      * @param ExtendRenewalDateRequest|array $requestBody
      * @param ?string                        $bundleId
+     *
      * @return ExtendRenewalDateResponse
-     * @throws GuzzleException
      */
     public function subscriptionsExtend($originalTransactionId, $requestBody, $bundleId = null)
     {
@@ -272,8 +270,10 @@ class AppStoreServerApi
      * Extend Subscription Renewal Dates for All Active Subscribers
      *
      * Uses a subscription’s product identifier to extend the renewal date for all of its eligible active subscribers.
+     *
      * @param ExtendRenewalDateRequest|array $requestBody
      * @param ?string                        $bundleId
+     *
      * @return MassExtendRenewalDateResponse
      * @throws GuzzleException
      * @since 1.7+
@@ -291,10 +291,13 @@ class AppStoreServerApi
     /**
      * Get Status of Subscription Renewal Date Extensions
      *
-     * Checks whether a renewal date extension request completed, and provides the final count of successful or failed extensions.
+     * Checks whether a renewal date extension request completed, and provides the final count of successful or failed
+     * extensions.
+     *
      * @param string  $requestIdentifier
      * @param string  $productId
      * @param ?string $bundleId
+     *
      * @return MassExtendRenewalDateStatusResponse
      * @throws GuzzleException
      * @since 1.7+
@@ -311,6 +314,7 @@ class AppStoreServerApi
      * @param                                  $requestBody
      * @param string                           $paginationToken
      * @param ?string                          $bundleId
+     *
      * @return NotificationHistoryResponse
      */
     public function notificationHistory($requestBody, $paginationToken = '', $bundleId = null)

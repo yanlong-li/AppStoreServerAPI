@@ -5,11 +5,15 @@ namespace yanlongli\AppStoreServerApi\request;
 
 class NotificationHistoryRequest
 {
-    public $originalTransactionId = '';
+    public $transactionId = '';
     public $notificationType = '';
     public $notificationSubtype = '';
     public $startDate;
     public $endDate;
+    /**
+     * @var bool A Boolean value that indicates whether the response includes only notifications that failed to reach your server.
+     */
+    public $onlyFailures;
 
     /**
      * @param $startDate
@@ -27,7 +31,7 @@ class NotificationHistoryRequest
         return array_filter([
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-            'originalTransactionId' => $this->originalTransactionId,
+            'transactionId' => $this->transactionId,
             'notificationType' => $this->notificationType,
             'notificationSubtype' => $this->notificationSubtype,
         ], function ($val) {

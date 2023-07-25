@@ -15,6 +15,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string priceIncreaseStatus    The status indicating whether a customer has approved a subscription price increase.
  * @property string productId              The unique identifier of the product.
  * @property string recentSubscriptionStartDate The earliest start date of an auto-renewable subscription in a series of subscription purchases that ignores all lapses of paid service that are 60 days or less.
+ * @property string renewalDate The UNIX time, in milliseconds, that the most recent auto-renewable subscription purchase expires.
  * @property string signedDate             The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature data.
  */
 class JWSRenewalInfoDecodedPayload

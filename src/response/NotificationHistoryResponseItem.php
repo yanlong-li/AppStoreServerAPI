@@ -2,7 +2,7 @@
 
 namespace yanlongli\AppStoreServerApi\response;
 /**
- * @property string                        firstSendAttemptResult 首次发送结果 <br/>
+ * @property SendAttemptItem[]             sendAttempts 首次发送结果 <br/>
  *  <p> SUCCESS
  *  App Store 服务器在向您的服务器发送通知时收到成功响应。
  * TIMED_OUT
@@ -27,8 +27,12 @@ namespace yanlongli\AppStoreServerApi\response;
  */
 class NotificationHistoryResponseItem
 {
-    public function __construct($signedPayload)
+    public function __construct($signedPayload, $sendAttempts)
     {
         $this->signedPayload = new JWSNotificationResponseBodyV2($signedPayload);
+
+        foreach ($sendAttempts as $sendAttempt) {
+            $this->sendAttempts[] = new SendAttemptItem($sendAttempt['attemptDate'], $sendAttempt['sendAttemptResult']);
+        }
     }
 }

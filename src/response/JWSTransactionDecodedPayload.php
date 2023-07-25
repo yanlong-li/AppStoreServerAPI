@@ -19,11 +19,13 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string revocationDate              The UNIX time, in milliseconds, that Apple Support refunded a transaction.
  * @property string revocationReason            The reason that the App Store refunded the transaction or revoked it from family sharing.
  * @property string signedDate                  The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature (JWS) data.
+ * @property string storefront                  The three-letter code that represents the country or region associated with the App Store storefront for the purchase.
+ * @property string storefrontId                An Apple-defined value that uniquely identifies the App Store storefront associated with the purchase.
  * @property string subscriptionGroupIdentifier The identifier of the subscription group the subscription belongs to.
  * @property string transactionId               The unique identifier of the transaction.
+ * @property string transactionReason           The reason for the purchase transaction, which indicates whether it’s a customer’s purchase or a renewal for an auto-renewable subscription that the system initates.
  * @property string type                        The type of the in-app purchase.
  * @property string webOrderLineItemId          A unique ID that identifies subscription purchase events across devices, including subscription renewals.
- * @property string recentSubscriptionStartDate The earliest start date of a subscription in a series of auto-renewable subscription purchases that ignores all lapses of paid service shorter than 60 days.
  */
 class JWSTransactionDecodedPayload
 {

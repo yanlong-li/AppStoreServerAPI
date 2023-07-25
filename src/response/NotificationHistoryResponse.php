@@ -16,9 +16,9 @@ class NotificationHistoryResponse extends Response
             return;
         }
         $this->paginationToken = $arr['paginationToken'] ?? '';
-        $this->hasMore = $arr['hasMore'] ?? false;
+        $this->hasMore         = $arr['hasMore'] ?? false;
         foreach ($arr['notificationHistory'] as $item) {
-            $this->notificationHistory[] = new NotificationHistoryResponseItem($item);
+            $this->notificationHistory[] = new NotificationHistoryResponseItem($item['signedPayload'], $item['sendAttempts']);
         }
     }
 }

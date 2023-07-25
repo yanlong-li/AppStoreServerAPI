@@ -92,7 +92,6 @@ $example->subscriptions(...,'bundleId');
 
 ## Example
 
-
 ```php
 <?php
 require_once 'vendor/autoload.php';
@@ -109,10 +108,10 @@ $example = new \yanlongli\AppStoreServerApi\AppStoreServerApi(
 $example->subscriptions('originalTransactionId','app bundle id'); // app bundle id 是可选的，这里将覆盖构造函数中的设定。
 
 // Get Transaction History
-$example->history('originalTransactionId','revision');
+$example->getTransactionHistory('originalTransactionId','revision');
 
 // Consumption Information
-$example->transactionsConsumption('originalTransactionId','requestBody');
+$example->sendConsumptionInformation('originalTransactionId','requestBody');
 
 // Order ID Lookup
 $example->lookup('orderId');
@@ -121,7 +120,7 @@ $example->lookup('orderId');
 $example->refundLookup('originalTransactionId');
 
 // Extend a Subscription Renewal Date
-$example->subscriptionsExtend('originalTransactionId','requestBody')
+$example->extendASubscriptionRenewalDate('originalTransactionId','requestBody')
 
 ```
 

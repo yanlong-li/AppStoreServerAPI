@@ -2,6 +2,7 @@
 
 namespace yanlongli\AppStoreServerApi;
 
+use Psr\Http\Message\ResponseInterface;
 use yanlongli\AppStoreServerApi\request\ConsumptionRequest;
 use yanlongli\AppStoreServerApi\request\ExtendRenewalDateRequest;
 use yanlongli\AppStoreServerApi\request\MassExtendRenewalDateRequest;
@@ -18,18 +19,21 @@ use yanlongli\AppStoreServerApi\response\TransactionInfoResponse;
 
 class AppStoreServerApi
 {
-    /** @var RestClient */
-    protected $restClient;
+    /**
+     * @var Config
+     */
+    protected $config;
+
 
     /**
-     * @param RestClient $restClient
+     * @param Config $config
      *
      * @link https://developer.apple.com/documentation/appstoreserverapi/creating_api_keys_to_use_with_the_app_store_server_api
      *       private and issuerid see
      */
-    public function __construct(RestClient $restClient)
+    public function __construct(Config $config)
     {
-        $this->restClient = $restClient;
+        $this->config = $config;
     }
 
 
@@ -63,10 +67,10 @@ class AppStoreServerApi
      * @link  https://developer.apple.com/documentation/appstoreserverapi/orderlookupresponse OrderLookupResponse
      * @since 1.1+
      */
-    public function lookupOrderId($orderId)
+    public function lookupOrderId($orderId): OrderLookupResponse
     {
         return new OrderLookupResponse(
-            $this->restClient->requestGetContents('/inApps/v1/lookup/' . $orderId
+            $this->requestGetContents('/inApps/v1/lookup/' . $orderId
             )
         );
     }
@@ -83,7 +87,7 @@ class AppStoreServerApi
      *       Document
      *
      */
-    public function getTransactionHistory($transactionId, $params = '', $bundleId = null)
+    public function getTransactionHistory(string $transactionId, $params = ''): HistoryResponse
     {
         $path = '/inApps/v1/history/' . $transactionId;
 
@@ -94,7 +98,7 @@ class AppStoreServerApi
         }
 
         return new HistoryResponse(
-            $this->restClient->requestGetContents($path
+            $this->requestGetContents($path
             )
         );
     }
@@ -107,30 +111,30 @@ class AppStoreServerApi
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses?changes=latest_minor
      * @since 1.0+
      */
-    public function getAllSubscriptionStatuses($transactionId, $params = [], $bundleId = null)
+    public function getAllSubscriptionStatuses(string $transactionId, $params = []): StatusResponse
     {
         $path = '/inApps/v1/subscriptions/' . $transactionId;
 
         if (!empty($params)) {
             $path .= '?' . http_build_query($params);
         }
-        return new StatusResponse($this->restClient->requestGetContents($path));
+        return new StatusResponse($this->requestGetContents($path));
     }
 
     /**
      * Get Transaction Info
      *
-     * @param string  $transactionId
-     * @param ?string $bundleId
+     * @param string $transactionId
      *
+     * @return TransactionInfoResponse
      * @since 1.8+
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info?changes=latest_minor
      */
-    public function getTransactionInfo($transactionId, $bundleId = null)
+    public function getTransactionInfo(string $transactionId): TransactionInfoResponse
     {
         $path = '/inApps/v1/transactions/' . $transactionId;
 
-        return new TransactionInfoResponse($this->restClient->requestGetContents($path));
+        return new TransactionInfoResponse($this->requestGetContents($path));
     }
 
     /**
@@ -138,12 +142,10 @@ class AppStoreServerApi
      *
      * @param string                   $transactionId transactionId or originalTransactionId
      * @param ConsumptionRequest|array $requestBody
-     * @param ?string                  $bundleId
      *
-     * @return void
      * @since 1.0+
      */
-    public function sendConsumptionInformation($transactionId, $requestBody, $bundleId = null)
+    public function sendConsumptionInformation(string $transactionId, $requestBody): ResponseInterface
     {
         $path = '/inApps/v1/transactions/consumption/' . $transactionId;
 
@@ -151,7 +153,7 @@ class AppStoreServerApi
             $requestBody = $requestBody->toArray();
         }
 
-        return $this->restClient->requestPut($path, $requestBody);
+        return $this->requestPut($path, $requestBody);
     }
 
     /**
@@ -161,15 +163,14 @@ class AppStoreServerApi
      * App Store Server API 1.6+
      *
      * @param string $transactionId transactionId or originalTransactionId
-     * @param        $bundleId
      *
      * @return RefundHistoryResponse
      * @since 1.6+
      */
-    public function getRefundHistory($transactionId, $bundleId = null)
+    public function getRefundHistory(string $transactionId): RefundHistoryResponse
     {
         $path = '/inApps/v2/refund/lookup/' . $transactionId;
-        return new RefundHistoryResponse($this->restClient->requestGetContents($path));
+        return new RefundHistoryResponse($this->requestGetContents($path));
     }
 
     /**
@@ -183,14 +184,14 @@ class AppStoreServerApi
      * @return ExtendRenewalDateResponse
      * @since 1.1+
      */
-    public function extendASubscriptionRenewalDate($originalTransactionId, $requestBody)
+    public function extendASubscriptionRenewalDate(string $originalTransactionId, $requestBody): ExtendRenewalDateResponse
     {
         $path = '/inApps/v1/subscriptions/extend/' . $originalTransactionId;
 
         if ($requestBody instanceof ExtendRenewalDateRequest) {
             $requestBody = $requestBody->toArray();
         }
-        return new ExtendRenewalDateResponse($this->restClient->requestPutContents($path, $requestBody));
+        return new ExtendRenewalDateResponse($this->requestPutContents($path, $requestBody));
     }
 
     /**
@@ -204,14 +205,14 @@ class AppStoreServerApi
      * @since 1.7+
      * @link  https://developer.apple.com/documentation/appstoreserverapi/extend_subscription_renewal_dates_for_all_active_subscribers
      */
-    public function extendSubscriptionRenewalDatesForAllActiveSubscribers($requestBody)
+    public function extendSubscriptionRenewalDatesForAllActiveSubscribers($requestBody): MassExtendRenewalDateResponse
     {
         $path = '/inApps/v1/subscriptions/extend/mass/';
 
         if ($requestBody instanceof MassExtendRenewalDateRequest) {
             $requestBody = $requestBody->toArray();
         }
-        return new MassExtendRenewalDateResponse($this->restClient->requestPostContents($path, $requestBody));
+        return new MassExtendRenewalDateResponse($this->requestPostContents($path, $requestBody));
     }
 
     /**
@@ -227,24 +228,23 @@ class AppStoreServerApi
      * @since 1.7+
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_status_of_subscription_renewal_date_extensions
      */
-    public function getStatusOfSubscriptionRenewalDateExtensions($requestIdentifier, $productId)
+    public function getStatusOfSubscriptionRenewalDateExtensions(string $requestIdentifier, string $productId): MassExtendRenewalDateStatusResponse
     {
-        $path = "/inApps/v1/subscriptions/extend/mass/{$requestIdentifier}/{$productId}";
+        $path = "/inApps/v1/subscriptions/extend/mass/$requestIdentifier/$productId";
 
-        return new MassExtendRenewalDateStatusResponse($this->restClient->requestGetContents($path));
+        return new MassExtendRenewalDateStatusResponse($this->requestGetContents($path));
     }
 
 
     /**
      * @param                                  $requestBody
      * @param string                           $paginationToken
-     * @param ?string                          $bundleId
      *
      * @return NotificationHistoryResponse
      * @since 1.5+
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
      */
-    public function getNotificationHistory($requestBody, $paginationToken = '', $bundleId = null)
+    public function getNotificationHistory($requestBody, string $paginationToken = ''): NotificationHistoryResponse
     {
         $path = '/inApps/v1/notifications/history';
         if (!empty($paginationToken)) {
@@ -253,11 +253,57 @@ class AppStoreServerApi
         if ($requestBody instanceof NotificationHistoryRequest) {
             $requestBody = $requestBody->toArray();
         }
-        return new NotificationHistoryResponse($this->restClient->requestPostContents($path, $requestBody));
+        return new NotificationHistoryResponse($this->requestPostContents($path, $requestBody));
     }
 
-    public function notificationsTest($bundleId = null)
+    public function notificationsTest(): NotificationHistoryResponse
     {
-        return new NotificationHistoryResponse($this->restClient->requestPostContents('/inApps/v1/notifications/test', []));
+        return new NotificationHistoryResponse($this->requestPostContents('/inApps/v1/notifications/test', []));
+    }
+
+
+    protected function requestGet($path): ResponseInterface
+    {
+        return $this->config->getHttpClient()->get($path);
+    }
+
+    protected function requestGetContents($path): string
+    {
+        return $this->requestGet($path)->getBody()->getContents();
+    }
+
+    protected function requestPut($path, $body): ResponseInterface
+    {
+        return $this->config->getHttpClient()->put($path, [
+            'json' => $body
+        ]);
+    }
+
+    protected function requestPutContents($path, $body): string
+    {
+        return $this->requestPut($path, $body)->getBody()->getContents();
+    }
+
+    protected function requestPost($path, $body): ResponseInterface
+    {
+        return $this->config->getHttpClient()->post($path, [
+            'json' => $body,
+        ]);
+    }
+
+    protected function requestPostContents($path, $body): string
+    {
+        return $this->requestPost($path, $body)->getBody()->getContents();
+    }
+
+    public function setConfig(Config $config): AppStoreServerApi
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->config;
     }
 }

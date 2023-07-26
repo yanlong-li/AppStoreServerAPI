@@ -1,21 +1,21 @@
 <?php
 
 use yanlongli\AppStoreServerApi\AppStoreServerApi;
+use yanlongli\AppStoreServerApi\Config;
 use yanlongli\AppStoreServerApi\Environment;
 use yanlongli\AppStoreServerApi\errors\AppStoreServerError;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-
-$restClient = new \yanlongli\AppStoreServerApi\RestClient(Environment::ENDPOINT_PRODUCTION,
+$config = new Config(Environment::ENDPOINT_PRODUCTION,
+    'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
     'XXXXXXXXXX',
     '-----BEGIN PRIVATE KEY-----
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -----END PRIVATE KEY-----',
-    'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
     "com.bundle.id");
 
-$assa = new AppStoreServerApi($restClient);
+$assa = new AppStoreServerApi($config);
 
 
 try {

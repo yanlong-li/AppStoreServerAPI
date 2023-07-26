@@ -72,7 +72,17 @@ class AppStoreServerError
 
     public static function fromException(RequestException $exception)
     {
+
+
         $contents = $exception->getResponse()->getBody()->getContents();
+
+        if (in_array($exception->getCode(), [401, 403])) {
+            return new self([
+                'errorCode'    => $exception->getCode(),
+                'errorMessage' => $contents,
+            ]);
+        }
+
         $contents = json_decode($contents, true);
 
         if (isset(self::LIST[$contents['errorCode']])) {

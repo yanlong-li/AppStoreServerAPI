@@ -14,6 +14,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property $storefrontId
  *
  */
+#[\AllowDynamicProperties]
 class JWSNotificationResponseBodyV2DecodedPayload
 {
     const NOTIFICATION_TYPE_CONSUMPTION_REQUEST = 'CONSUMPTION_REQUEST';

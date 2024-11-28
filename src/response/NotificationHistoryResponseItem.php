@@ -25,6 +25,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * 发生另一个错误，阻止服务器接收通知。 </p>
  * @property JWSNotificationResponseBodyV2 signedPayload
  */
+#[\AllowDynamicProperties]
 class NotificationHistoryResponseItem
 {
     public function __construct($signedPayload, $sendAttempts)

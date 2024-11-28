@@ -46,6 +46,20 @@ class AppStoreServerError
         4000013 => StartDateAfterEndDateAppStoreServerError::class,
         4000012 => StartDateTooFarInPastAppStoreServerError::class,
         4040008 => TestNotificationNotFoundAppStoreServerError::class,
+        4000044 => InvalidRefundPreferenceError::class,
+        4000032 => InvalidAccountTenureError::class,
+        4000033 => InvalidAppAccountTokenError::class,
+        4000034 => InvalidConsumptionStatusError::class,
+        4000035 => InvalidCustomerConsentedError::class,
+        4000036 => InvalidDeliveryStatusError::class,
+        4000037 => InvalidLifetimeDollarsPurchasedError::class,
+        4000038 => InvalidLifetimeDollarsRefundedError::class,
+        4000039 => InvalidPlatformError::class,
+        4000040 => InvalidPlayTimeError::class,
+        4000041 => InvalidSampleContentProvidedError::class,
+        4000042 => InvalidUserStatusError::class,
+        4000043 => InvalidTransactionNotConsumableError::class,
+        4000047 => InvalidTransactionTypeNotSupportedError::class,
 
     ];
     /** @var int */

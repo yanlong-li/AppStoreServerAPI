@@ -25,7 +25,7 @@ class Config
      * @param ?string      $privateKey
      * @param ?string      $privateKeyId
      */
-    public function __construct($endpoint, string $issuerId = null, string $privateKey = null, string $privateKeyId = null, string $bundleId = null, ClientInterface $httpClient = null)
+    public function __construct($endpoint, ?string $issuerId = null, ?string $privateKey = null, ?string $privateKeyId = null, ?string $bundleId = null, ?ClientInterface $httpClient = null)
     {
         if (is_array($endpoint)) {
             extract($endpoint);

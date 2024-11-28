@@ -11,6 +11,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property JWSTransaction signedTransactionInfo
  *
  */
+#[\AllowDynamicProperties]
 class JWSNotificationResponseBodyV2DecodedPayloadData
 {
     public function __set($name, $value)

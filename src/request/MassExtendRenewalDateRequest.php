@@ -8,6 +8,7 @@ namespace yanlongli\AppStoreServerApi\request;
  * Omit this list to request the subscription-renewal-date extension in all storefronts.
  * @since 1.7+
  */
+#[\AllowDynamicProperties]
 class MassExtendRenewalDateRequest extends ExtendRenewalDateRequest
 {
     public function __construct($extendReasonCode, $extendByDays, $requestIdentifier, $productId, $storefrontCountryCodes)

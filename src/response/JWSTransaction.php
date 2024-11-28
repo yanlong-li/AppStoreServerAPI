@@ -5,6 +5,7 @@ namespace yanlongli\AppStoreServerApi\response;
 
 /**
  */
+#[\AllowDynamicProperties]
 class JWSTransaction
 {
 

@@ -6,6 +6,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property boolean                           hasMore
  * @property string                            paginationToken
  */
+#[\AllowDynamicProperties]
 class NotificationHistoryResponse extends Response
 {
     public function __construct($contents)

@@ -4,10 +4,14 @@
 namespace yanlongli\AppStoreServerApi\response;
 
 /**
- * @property JWSTransaction $signedTransactionInfo
  */
 class TransactionInfoResponse extends Response
 {
+    /**
+     * @var JWSTransaction
+     */
+    public $signedTransactionInfo;
+
     public function __construct($contents)
     {
         parent::__construct($contents);

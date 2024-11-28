@@ -82,14 +82,14 @@ class AppStoreServerApi
      *                                    which may be an original transaction identifier (originalTransactionId).
      * @param string|array $params
      *
-     * @since 1.0+
+     * @since 1.12+
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history?changes=latest_minor
      *       Document
      *
      */
     public function getTransactionHistory(string $transactionId, $params = ''): HistoryResponse
     {
-        $path = '/inApps/v1/history/' . $transactionId;
+        $path = '/inApps/v2/history/' . $transactionId;
 
         if (is_array($params)) {
             $path .= '?' . http_build_query($params);
@@ -107,6 +107,15 @@ class AppStoreServerApi
      * Get All Subscription Statuses
      *
      * @param string $transactionId transactionId or originalTransactionId
+     * @param array{
+     *     status: integer,
+     * }             $params        status The status of an auto-renewable subscription.
+     *                              1 The auto-renewable subscription is active.
+     *                              2 The auto-renewable subscription is expired.
+     *                              3 The auto-renewable subscription is in a billing retry period.
+     *                              4 The auto-renewable subscription is in a Billing Grace Period.
+     *                              5 The auto-renewable subscription is revoked. The App Store refunded the
+     *                              transaction or revoked it from Family Sharing.
      *
      * @link  https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses?changes=latest_minor
      * @since 1.0+

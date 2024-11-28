@@ -12,6 +12,7 @@ namespace yanlongli\AppStoreServerApi\response;
  *
  * @link https://developer.apple.com/documentation/appstoreserverapi/statusresponse
  */
+#[\AllowDynamicProperties]
 class StatusResponse extends Response
 {
     /**

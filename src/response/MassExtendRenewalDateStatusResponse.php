@@ -15,6 +15,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * Appears only if complete is TRUE.
  * @since 1.7+
  */
+#[\AllowDynamicProperties]
 class MassExtendRenewalDateStatusResponse extends Response
 {
     public function __construct($contents)

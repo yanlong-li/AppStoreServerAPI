@@ -1,25 +1,14 @@
 <?php
 
-use yanlongli\AppStoreServerApi\AppStoreServerApi;
-use yanlongli\AppStoreServerApi\Config;
 use yanlongli\AppStoreServerApi\errors\AppStoreServerError;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$config = new Config([
-    'httpClient' => new \GuzzleHttp\Client([
-        'base_uri' => 'https://api.appstoreconnect.apple.com/v1/',
-        'headers'  => [
-            'Authorization' => "Bearer xxxxxxxxxxxxxxxxx",
-        ]
-    ]),
-]);
-
-$assa = new AppStoreServerApi($config);
+$assa = require_once 'client.php';
 
 
 try {
-    $res = $assa->getTransactionInfo('100001408074716');
+    $res = $assa->getTransactionInfo('100000000000000');
     var_dump($res);
 } catch (\GuzzleHttp\Exception\ClientException $exception) {
     $err = AppStoreServerError::fromException($exception);

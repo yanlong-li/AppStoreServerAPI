@@ -12,6 +12,7 @@ namespace yanlongli\AppStoreServerApi\request;
  * The number of days is a number from 1 to 90.
  * @property string requestIdentifier A string that contains a unique identifier you provide to track each subscription-renewal-date-extension request.
  */
+#[\AllowDynamicProperties]
 class ExtendRenewalDateRequest
 {
 

@@ -8,6 +8,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * 1 The orderId is valid.
  * @property JWSTransaction[] signedTransactions An array of in-app purchase transactions that are part of order, signed by Apple, in JSON Web Signature format.
  */
+#[\AllowDynamicProperties]
 class OrderLookupResponse extends Response
 {
     /**

@@ -12,6 +12,7 @@
     "purchases",
     "itunes"
   ],
+  "version": "1.13",
   "minimum-stability": "beta",
   "license": "MIT",
   "authors": [
@@ -21,7 +22,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "firebase/php-jwt": "*",
     "guzzlehttp/guzzle": "*",
     "ext-json": "*"

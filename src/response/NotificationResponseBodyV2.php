@@ -4,6 +4,7 @@ namespace yanlongli\AppStoreServerApi\response;
 /**
  * @property JWSNotificationResponseBodyV2 signedPayload
  */
+#[\AllowDynamicProperties]
 class NotificationResponseBodyV2
 {
     public function __construct($signedPayload)

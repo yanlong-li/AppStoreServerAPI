@@ -5,6 +5,7 @@ namespace yanlongli\AppStoreServerApi\response;
 /**
  * @property string $testNotificationToken
  */
+#[\AllowDynamicProperties]
 class SendTestNotificationResponse extends Response
 {
     public function __construct($contents)

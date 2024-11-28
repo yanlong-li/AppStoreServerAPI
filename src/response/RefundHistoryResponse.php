@@ -6,6 +6,7 @@ namespace yanlongli\AppStoreServerApi\response;
  * @property string           $revision 获取后续记录的凭据
  * @property JWSTransaction[] $signedTransactions
  */
+#[\AllowDynamicProperties]
 class RefundHistoryResponse extends Response
 {
     /**

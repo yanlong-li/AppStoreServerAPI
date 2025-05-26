@@ -17,10 +17,7 @@ class JWSRenewalInfo
     public function __construct($jws)
     {
         $this->jws = $jws;
-        $this->payload = new JWSRenewalInfoDecodedPayload();
-        foreach ($this->getPayloadToArray() as $key => $value) {
-            $this->payload->{$key} = $value;
-        }
+        $this->payload = new JWSRenewalInfoDecodedPayload($this->getPayloadToArray());
     }
 
 

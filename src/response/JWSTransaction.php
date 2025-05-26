@@ -23,10 +23,7 @@ class JWSTransaction
     {
         $this->jws = $jws;
 
-        $this->payload = new JWSTransactionDecodedPayload();
-        foreach ($this->getPayloadToArray() as $key => $value) {
-            $this->payload->{$key} = $value;
-        }
+        $this->payload = new JWSTransactionDecodedPayload($this->getPayloadToArray());
     }
 
 

@@ -60,6 +60,7 @@ class AppStoreServerError
         4000042 => InvalidUserStatusError::class,
         4000043 => InvalidTransactionNotConsumableError::class,
         4000047 => InvalidTransactionTypeNotSupportedError::class,
+        4000048 => AppTransactionIdNotSupportedError::class,
 
     ];
     /** @var int */
